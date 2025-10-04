@@ -1,0 +1,82 @@
+<?
+	include "main_top.php";
+	include "carousel.php";
+	
+	$find_text = $_REQUEST["find_text"];
+	
+	$sql = "SELECT * FROM game WHERE name LIKE '%$find_text%' ORDER BY id";
+	$result=mysqli_query($db, $sql);
+	$args = "name=$find_text";
+	$row=mysqli_fetch_array($result);
+?>
+<div class="row mt-5 mb-1">
+	<div class="col" align="left">
+		<h2 style="font-size: 35px"><font color='#AF2031'>&nbsp;&nbsp;검색 결과</font></h2>
+	</div>	
+</div>	
+<hr class="mt-0 mb-1">
+<br>
+<div class="row">
+	<? 
+		if(mysqli_num_rows($result)) {
+			foreach($result as $row) {
+				$id = $row["id"];
+				$genre = $a_genre[$row["genre"]];
+				$name = $row["name"];
+				$coname = $row["coname"];
+				$icon1 = $row["icon_new"];
+				$icon2 = $row["icon_hit"];
+				$icon3 = $row["icon_sale"];
+				$discount = $row["discount"] . "%";
+				$saleprice = "₩ " . number_format(round($row["price"] * ((100 - $row["discount"])/100), -2));
+				$price = "₩ " . number_format($row["price"]);
+				$image1 = $row["image1"] == "" ? "p1.png" : $row["image1"];
+	?>
+	<div class="col-sm-3 mb-3">
+		<div class="card h-100">
+			<div class="icon-row" style="display: flex; gap: 1px; align-items: flex-end; margin-bottom: 10px; min-height: 30px;">
+				&nbsp;&nbsp;<? if($icon1) { ?><span style="background-color: #E2B639; color: white; padding: 3px 10px; border-radius: 6px; font-size: 15px; display: inline-block; margin-left: 5px; font-family: SCDream6;">신작</span><? } ?><? if($icon2) { ?><span style="background-color: #63ADB6; color: white; padding: 3px 10px; border-radius: 6px; font-size: 15px; display: inline-block; margin-left: 5px; font-family: SCDream6;">인기</span><? } ?><? if($icon3) { ?><span style="background-color: #5BA640; color: white; padding: 3px 10px; border-radius: 6px; font-size: 15px; display: inline-block; margin-left: 5px; font-family: SCDream6;">할인</span><? } ?>
+			</div>
+			<div class="zoom_image" align="center" style="border-radius: 30px; overflow: hidden; display: inline-block; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.25);">
+				<a href="product.php?id=<?=$id ?>"><img src="product/<?=$image1 ?>" 
+					height="360" class="card-img-top img-fluid"></a>
+			</div>
+			<div class="card-body" align="left" style="font-size:20px;">
+				<div class="card-title">
+					<div class="name-wrapper">
+						<a href="product.php?id=<?=$id ?>" class="sliding-text" style="font-family:'SCDream7'; font-size: 22px; color: #444444;"><?=$name ?></a><br>
+					</div>
+					<!-- <a href="product.php?id=<?=$id ?>" style="font-family:'SCDream5'; font-size:13px;"><?=$coname ?></a><br> -->
+				</div>
+				<p class="card-text" align="left" style="font-size: 21px; font-family: SCDream4; color: #555555;">
+					<? if($row["discount"]) { ?>
+						<b style="color: #AF2031;"><?=$saleprice ?></b>
+						&nbsp;<small><font color='#999999' style="font-family:SCDream5;"><strike><?=$price ?></strike></font> 
+						<span style="background-color: #AF2031; color: white; padding: 2px 8px; border-radius: 8px; font-size: 15px; display: inline-block; margin-left: 5px; position: relative; top: 3px; float: right; font-family: SCDream5;">
+							<?=$row["discount"] ?>%
+						</span>
+						</small>
+					<? } else { ?>
+						<b><?=$price ?></b>
+					<? } ?>
+					<br><br>
+				</p>
+			</div>
+		</div>
+	
+	</div>
+	<? } } else { ?>
+	<div class="row m-3 mb-0">
+		<div class="col" align="center">
+			<br><br><br><br><br><br>
+			<h3 style="font-family: SCDream5;">검색 결과가 존재하지 않습니다.</h3>
+			<br><br><br><br><br><br>
+		</div>
+	</div>
+	<? } ?>
+</div>
+<br><br><br>
+
+<?
+	include "main_bottom.php";
+?>
